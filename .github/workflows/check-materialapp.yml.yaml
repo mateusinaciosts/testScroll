@@ -9,40 +9,32 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          sdk: stable
-
-      - run: flutter --version
       
-      - name: Check for MaterialApp in main.dart
+      - name: Check and Fix for MaterialApp
         id: check_materialapp
         run: |
           FILE="lib/scroll_widget.dart"
+
+          # Verifica se MaterialApp está presente
           if grep -q "MaterialApp" $FILE; then
             echo "MaterialApp já presente no código."
           else
             echo "MaterialApp não encontrado. Corrigindo..."
-            
-            # Backup do arquivo original
+
+            # Faz backup do arquivo original
             cp $FILE "${FILE}.bak"
 
-            # Adiciona MaterialApp automaticamente
-            awk '
-              /Widget build(BuildContext context) {/ {
-                print $0
-                in_build = 1
-                next
-              }
-              in_build && /return / {
-                print "MaterialApp(home: " $0
-                in_build = 0
-                next
-              }
-              { print }
-            ' $FILE > tmpfile && mv tmpfile $FILE
+            # Adiciona MaterialApp automaticamente antes do retorno
+            sed -i '/Widget build(BuildContext context) {/ { 
+              N
+              s/return /return MaterialApp(home: / 
+            }' $FILE
+
+            # Fecha o parêntese do MaterialApp no final do retorno
+            sed -i '/MaterialApp(home:/ { 
+              N 
+              s/);$/));/ 
+            }' $FILE
 
             # Verifica se a modificação foi bem-sucedida
             if grep -q "MaterialApp" $FILE; then
