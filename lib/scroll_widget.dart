@@ -14,7 +14,7 @@ class _ScrollWidgetState extends State<ScrollWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return MaterialApp(home: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
           key: scaffoldKey,
@@ -98,6 +98,6 @@ class _ScrollWidgetState extends State<ScrollWidget> {
             ),
           ),
         ),
-       );
+       ),);
   }
 }
