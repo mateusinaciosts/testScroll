@@ -31,10 +31,18 @@ jobs:
             }' $FILE
 
             # Fecha o parêntese do MaterialApp no final do retorno
-            sed -i '/MaterialApp(home: / {
-            N
-            s/);$/),);/
-            }' $FILE
+            awk '
+            /Widget build(BuildContext context) {/ {
+              print "  return MaterialApp(home: ";
+              next;
+             }
+            {
+              print;
+            }
+            END {
+              print "  );";
+            }
+            ' $FILE > temp && mv temp $FILE
 
             # Verifica se a modificação foi bem-sucedida
             if grep -q "MaterialApp" $FILE; then
