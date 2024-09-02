@@ -33,7 +33,7 @@ jobs:
             # Fecha o parêntese do MaterialApp no final do retorno
             sed -i '/MaterialApp(home:/ { 
               N 
-              s/);$/));/ 
+              s/);$/),);/ 
             }' $FILE
 
             # Verifica se a modificação foi bem-sucedida
