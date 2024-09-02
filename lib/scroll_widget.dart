@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 class ScrollWidget extends StatefulWidget {
-  const ScrollWidget({super.key});
+  const ScrollWidget({super.key}),);
 
   @override
-  State<ScrollWidget> createState() => _ScrollWidgetState();
+  State<ScrollWidget> createState() => _ScrollWidgetState(),);
 }
 
 class _ScrollWidgetState extends State<ScrollWidget> {
    String itemText = 'itens: ';
 
-  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>(),);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return MaterialApp(home: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
           key: scaffoldKey,
@@ -29,7 +29,7 @@ class _ScrollWidgetState extends State<ScrollWidget> {
                 size: 30.0,
               ),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context),);
               },
             ),
             title: const Padding(
@@ -54,7 +54,7 @@ class _ScrollWidgetState extends State<ScrollWidget> {
                   final itens = List.generate(
                     100,
                     (index) => index + 1,
-                  );
+                  ),);
 
                   return SingleChildScrollView(
                     child: Column(
@@ -89,15 +89,15 @@ class _ScrollWidgetState extends State<ScrollWidget> {
                               ),
                             ],
                           ),
-                        );
+                        ),);
                       }).toList(),
                     ),
-                  );
+                  ),);
                 },
               ),
             ),
           ),
         ),
-       );
+       ),);
   }
 }
