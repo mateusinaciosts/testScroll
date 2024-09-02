@@ -48,8 +48,8 @@ jobs:
       - name: Commit changes
         if: steps.check_materialapp.outcome == 'success'
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add lib/main.dart
+          git config user.name "Mateus Inacio"
+          git config user.email "mateusinaciosts@github.com"
+          git add lib/scroll_widget.dart
           git commit -m "Adicionar MaterialApp ao return se ausente"
           git push
