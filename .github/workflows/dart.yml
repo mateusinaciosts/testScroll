@@ -1,0 +1,79 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Dart
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check and Fix for MaterialApp
+        id: check_materialapp
+        run: |
+          FILE="lib/scroll_widget.dart"
+
+          # Verifica se MaterialApp está presente
+          if grep -q "MaterialApp" $FILE; then
+            echo "MaterialApp já presente no código."
+          else
+            echo "MaterialApp não encontrado. Corrigindo..."
+
+            # Faz backup do arquivo original
+            cp $FILE "${FILE}.bak"
+
+            # Adiciona MaterialApp automaticamente antes do retorno
+            sed -i '/Widget build(BuildContext context) {/ { 
+              N
+              s/return /return MaterialApp(home: / 
+            }' $FILE
+
+            # Fecha o parêntese do MaterialApp no final do retorno
+            sed -i '/MaterialApp(home:/ { 
+              N 
+              s/);$/));/ 
+            }' $FILE
+
+            # Verifica se a modificação foi bem-sucedida
+            if grep -q "MaterialApp" $FILE; then
+              echo "MaterialApp adicionado automaticamente ao return."
+            else
+              echo "Erro: Não foi possível adicionar MaterialApp ao return."
+              exit 1
+            fi
+          fi
+
+      - name: Commit changes
+        if: steps.check_materialapp.outcome == 'success'
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          # Verifica o status do repositório
+          git status
+
+          # Adiciona o arquivo modificado
+          git add lib/scroll_widget.dart
+          
+          # Verifica se há mudanças para comitar
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "Adicionar MaterialApp ao return se ausente"
+            git push
+          else
+            echo "Nenhuma alteração para commit."
+          fi
+
+      # want to change this to 'flutter test'.
+      - name: Run tests
+        run: dart test
