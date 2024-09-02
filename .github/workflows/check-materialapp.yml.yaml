@@ -31,7 +31,7 @@ jobs:
             }' $FILE
 
             # Fecha o parêntese do MaterialApp no final do retorno
-            sed ':a;N;$!ba;s/);/\n/;s/\n/),);/;s/);/\n/;s/\n/);/;' lib/scroll_widget.dart > temp && mv temp lib/scroll_widget.dart
+            tac $FILE | sed '0,/);/s/);/),);/' | tac > temp && mv temp $FILE
             
             # Verifica se a modificação foi bem-sucedida
             if grep -q "MaterialApp" $FILE; then

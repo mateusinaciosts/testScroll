@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';),);
-class ScrollWidget extends StatefulWidget {
-  const ScrollWidget({super.key}
+import 'package:flutter/material.dart';
 
+class ScrollWidget extends StatefulWidget {
+  const ScrollWidget({super.key});
 
   @override
   State<ScrollWidget> createState() => _ScrollWidgetState();
@@ -14,7 +14,7 @@ class _ScrollWidgetState extends State<ScrollWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: GestureDetector(
+    return GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
           key: scaffoldKey,
