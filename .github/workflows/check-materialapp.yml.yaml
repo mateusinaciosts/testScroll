@@ -1,0 +1,53 @@
+name: Check MaterialApp
+
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Run Dart analysis
+        run: dart analyze
+
+      - name: Check for MaterialApp in main.dart
+        id: check_materialapp
+        run: |
+          FILE="lib/scroll_widget.dart"
+          if grep -q "MaterialApp" $FILE; then
+            echo "MaterialApp já presente no código."
+          else
+            echo "MaterialApp não encontrado. Corrigindo..."
+            
+            # Backup do arquivo original
+            cp $FILE "${FILE}.bak"
+
+            # Adiciona MaterialApp automaticamente
+            sed -i 's/return /return MaterialApp(home: /' $FILE
+            sed -i '/MaterialApp(home:/,/\);/s/\);/));/' $FILE
+
+            # Verifica se a modificação foi bem-sucedida
+            if grep -q "MaterialApp" $FILE; then
+              echo "MaterialApp adicionado automaticamente ao return."
+            else
+              echo "Erro: Não foi possível adicionar MaterialApp ao return."
+              exit 1
+            fi
+          fi
+
+      - name: Commit changes
+        if: steps.check_materialapp.outcome == 'success'
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add lib/main.dart
+          git commit -m "Adicionar MaterialApp ao return se ausente"
+          git push
