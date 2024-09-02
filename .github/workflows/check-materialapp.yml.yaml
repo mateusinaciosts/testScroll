@@ -8,15 +8,17 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Dart
-        uses: dart-lang/setup-dart@v1
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
           sdk: stable
 
-      - name: Run Dart analysis
-        run: dart analyze
+      - run: flutter --version
+      
+      - name: Run Flutter analysis
+        run: flutter analyze 
 
       - name: Check for MaterialApp in main.dart
         id: check_materialapp
