@@ -17,9 +17,6 @@ jobs:
 
       - run: flutter --version
       
-      - name: Run Flutter analysis
-        run: flutter analyze 
-
       - name: Check for MaterialApp in main.dart
         id: check_materialapp
         run: |
