@@ -31,8 +31,8 @@ jobs:
             }' $FILE
 
             # Fecha o parêntese do MaterialApp no final do retorno
-            tac $FILE | sed '0,/);/s/);/),);/' | tac > temp && mv temp $FILE
-            
+            awk '{print NR ":" $0}' $FILE | tac | sed '0,/^.*[0-9]* :.*\)\;$/s/)\;/),);/' | tac | cut -d: -f2- > temp && mv temp $FILE
+
             # Verifica se a modificação foi bem-sucedida
             if grep -q "MaterialApp" $FILE; then
               echo "MaterialApp adicionado automaticamente ao return."
