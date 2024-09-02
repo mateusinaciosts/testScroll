@@ -46,8 +46,8 @@ jobs:
                   print lines[i]
                 }
               }
-              ' FILE > temp && mv temp FILE
-              
+              ' $FILE > temp && mv temp $FILE
+
             # Verifica se a modificação foi bem-sucedida
             if grep -q "MaterialApp" $FILE; then
               echo "MaterialApp adicionado automaticamente ao return."
