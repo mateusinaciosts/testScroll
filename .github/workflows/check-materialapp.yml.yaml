@@ -17,21 +17,34 @@ jobs:
 
       - run: flutter --version
       
-      - name: Check for MaterialApp in main.dart
+       - name: Check and Fix for MaterialApp
         id: check_materialapp
         run: |
           FILE="lib/scroll_widget.dart"
+
+          # Verifica se MaterialApp está presente
           if grep -q "MaterialApp" $FILE; then
             echo "MaterialApp já presente no código."
           else
             echo "MaterialApp não encontrado. Corrigindo..."
-            
-            # Backup do arquivo original
+
+            # Faz backup do arquivo original
             cp $FILE "${FILE}.bak"
 
             # Adiciona MaterialApp automaticamente
-            sed -i 's/return /return MaterialApp(home: /' $FILE
-            sed -i '/MaterialApp(home:/,/\);/s/\);/));/' $FILE
+            awk '
+              /Widget build(BuildContext context) {/ {
+                print $0
+                in_build = 1
+                next
+              }
+              in_build && /return / {
+                print "MaterialApp(home: " $0
+                in_build = 0
+                next
+              }
+              { print }
+            ' $FILE > tmpfile && mv tmpfile $FILE
 
             # Verifica se a modificação foi bem-sucedida
             if grep -q "MaterialApp" $FILE; then
@@ -41,7 +54,7 @@ jobs:
               exit 1
             fi
           fi
-
+          
       - name: Commit changes
         if: steps.check_materialapp.outcome == 'success'
         run: |
