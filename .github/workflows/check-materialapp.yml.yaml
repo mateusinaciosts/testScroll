@@ -30,9 +30,24 @@ jobs:
               s/return /return MaterialApp(home: / 
             }' $FILE
 
-            # Fecha o parêntese do MaterialApp no final do retorno
-            awk '{print NR ":" $0}' $FILE | tac | sed '0,/^.*[0-9]* :.*\)\;$/s/)\;/),);/' | tac | cut -d: -f2- > temp && mv temp $FILE
-
+            # Substitui o último `);` por `),);`
+            awk '
+              {
+                lines[NR] = $0
+              }
+              END {
+                for (i = NR; i >= 1; i--) {
+                  if (index(lines[i], ");") > 0) {
+                    sub(/\);\s*$/, "),);", lines[i])
+                    break
+                  }
+                }
+                for (i = 1; i <= NR; i++) {
+                  print lines[i]
+                }
+              }
+              ' FILE > temp && mv temp FILE
+              
             # Verifica se a modificação foi bem-sucedida
             if grep -q "MaterialApp" $FILE; then
               echo "MaterialApp adicionado automaticamente ao return."
