@@ -31,18 +31,7 @@ jobs:
             }' $FILE
 
             # Fecha o parêntese do MaterialApp no final do retorno
-            awk '
-            /Widget build(BuildContext context) {/ {
-              print "  return MaterialApp(home: ";
-              next;
-             }
-            {
-              print;
-            }
-            END {
-              print "  );";
-            }
-            ' $FILE > temp && mv temp $FILE
+            awk '{gsub(/\);/, "),);"); print}' $FILE > temp && mv temp $FILE
 
             # Verifica se a modificação foi bem-sucedida
             if grep -q "MaterialApp" $FILE; then
