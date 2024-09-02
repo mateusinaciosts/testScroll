@@ -31,7 +31,20 @@ jobs:
             }' $FILE
 
             # Fecha o parêntese do MaterialApp no final do retorno
-            awk '{gsub(/\);/, "),);"); print}' $FILE > temp && mv temp $FILE
+            awk '
+            {
+              line = $0;
+              if (match(line, /\)\;/)) {
+                last_occurrence = RSTART;
+              }
+              print;
+            }
+            END {
+              if (last_occurrence > 0) {
+                sub(/\)\;$/, "),);", substr(line, last_occurrence));
+                print substr(line, 1, last_occurrence - 1) substr(line, last_occurrence);
+              }
+            }
 
             # Verifica se a modificação foi bem-sucedida
             if grep -q "MaterialApp" $FILE; then
